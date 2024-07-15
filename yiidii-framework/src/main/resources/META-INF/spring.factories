@@ -1,0 +1,10 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  cn.yiidii.framework.config.JacksonConfig,\
+  cn.yiidii.framework.config.RedisConfig, \
+  cn.yiidii.framework.config.WebMvcConfiguration, \
+  cn.yiidii.framework.config.CustomMessageSourceConfiguration, \
+  cn.yiidii.framework.web.exception.GlobalExceptionHandler, \
+  cn.yiidii.framework.satoken.PlusSaTokenDao,\
+  cn.yiidii.framework.satoken.StpInterfaceImpl,\
+  cn.yiidii.framework.config.MybatisPlusConfig
+
