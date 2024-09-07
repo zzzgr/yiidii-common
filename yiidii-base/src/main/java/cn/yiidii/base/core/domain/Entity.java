@@ -35,7 +35,7 @@ public class Entity<T> extends SuperEntity<T> {
     @TableField(value = "status")
     protected Integer status;
 
-    @TableField(value = "update_time", fill = FieldFill.INSERT_UPDATE)
+    @TableField(value = "update_time")
     protected LocalDateTime updateTime;
 
     @TableField(value = "updated_by", fill = FieldFill.INSERT_UPDATE)

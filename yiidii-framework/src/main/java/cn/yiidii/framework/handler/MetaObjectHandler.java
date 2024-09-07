@@ -47,7 +47,7 @@ public class MetaObjectHandler implements com.baomidou.mybatisplus.core.handlers
                 this.setFieldValByName(Entity.UPDATED_BY, ContextUtil.getUserId(Number.class), metaObject);
             }
             if (entity.getUpdateTime() == null) {
-                this.setFieldValByName(Entity.UPDATE_TIME, LocalDateTime.now(), metaObject);
+//                this.setFieldValByName(Entity.UPDATE_TIME, LocalDateTime.now(), metaObject);
             }
         }
     }
