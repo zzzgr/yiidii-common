@@ -2,6 +2,7 @@ package cn.yiidii.framework.config;
 
 import cn.yiidii.framework.interceptor.CompletionInterceptor;
 import cn.yiidii.framework.interceptor.LocaleInterceptor;
+import cn.yiidii.framework.interceptor.RequestTraceInterceptor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -18,6 +19,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new CompletionInterceptor());
         registry.addInterceptor(new LocaleInterceptor());
+        registry.addInterceptor(new RequestTraceInterceptor());
     }
 
     /**
