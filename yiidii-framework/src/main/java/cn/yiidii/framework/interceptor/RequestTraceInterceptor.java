@@ -2,7 +2,9 @@ package cn.yiidii.framework.interceptor;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
+import cn.yiidii.framework.annotation.IgnoreRequestTrace;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
@@ -17,6 +19,22 @@ public class RequestTraceInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        // 检查是否有忽略注解
+        if (handler instanceof HandlerMethod) {
+            HandlerMethod handlerMethod = (HandlerMethod) handler;
+            // 检查方法上是否有注解
+            IgnoreRequestTrace methodAnnotation = handlerMethod.getMethodAnnotation(IgnoreRequestTrace.class);
+            if (methodAnnotation != null && methodAnnotation.value()) {
+                return true;
+            }
+            
+            // 检查类上是否有注解
+            IgnoreRequestTrace classAnnotation = handlerMethod.getBeanType().getAnnotation(IgnoreRequestTrace.class);
+            if (classAnnotation != null && classAnnotation.value()) {
+                return true;
+            }
+        }
+        
         // 包装request，使其可重复读取
         ContentCachingRequestWrapper requestWrapper = new ContentCachingRequestWrapper(request);
         ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper(response);
