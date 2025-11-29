@@ -2,6 +2,8 @@ package cn.yiidii.framework.web.exception;
 
 
 import cn.dev33.satoken.exception.NotLoginException;
+import cn.dev33.satoken.exception.NotPermissionException;
+import cn.dev33.satoken.exception.NotRoleException;
 import cn.hutool.core.stream.StreamUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.yiidii.base.core.domain.R;
@@ -25,7 +27,6 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import java.util.function.Function;
 
 @Slf4j
 @RestControllerAdvice
@@ -154,6 +155,20 @@ public class GlobalExceptionHandler {
     public R<?> NotLogin(NotLoginException ex) {
         String message = MessageUtils.message("auth.notLogin");
         return R.failed(401, message);
+    }
+
+    @ExceptionHandler(NotRoleException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public R<?> notRole(NotRoleException ex) {
+        String message = MessageUtils.message("auth.notRole");
+        return R.failed(403, message);
+    }
+
+    @ExceptionHandler(NotPermissionException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public R<?> notPermissionException() {
+        String message = MessageUtils.message("auth.notPermission");
+        return R.failed(403, message);
     }
 
 
