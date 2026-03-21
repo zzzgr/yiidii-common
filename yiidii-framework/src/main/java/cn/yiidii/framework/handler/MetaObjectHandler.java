@@ -1,8 +1,8 @@
 package cn.yiidii.framework.handler;
 
-import cn.yiidii.base.core.domain.Entity;
-import cn.yiidii.base.core.domain.SuperEntity;
-import cn.yiidii.base.util.ContextUtil;
+import cn.yiidii.framework.core.domain.Entity;
+import cn.yiidii.framework.core.domain.SuperEntity;
+import cn.yiidii.framework.util.ContextUtil;
 import org.apache.ibatis.reflection.MetaObject;
 
 import java.time.LocalDateTime;

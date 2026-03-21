@@ -1,6 +1,6 @@
 package cn.yiidii.framework.interceptor;
 
-import cn.yiidii.base.util.ContextUtil;
+import cn.yiidii.framework.util.ContextUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.servlet.HandlerInterceptor;

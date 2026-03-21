@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.redisson.codec.JsonJacksonCodec;
 import org.redisson.spring.starter.RedissonAutoConfigurationCustomizer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +20,8 @@ import java.util.Objects;
  * @author Lion Li
  */
 @Slf4j
+@Configuration(proxyBeanMethods = false)
+@ConditionalOnClass(RedissonAutoConfigurationCustomizer.class)
 @EnableConfigurationProperties(RedissonProperties.class)
 public class RedisConfig {
 

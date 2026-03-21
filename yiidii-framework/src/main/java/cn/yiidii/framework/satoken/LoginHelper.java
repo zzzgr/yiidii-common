@@ -3,8 +3,8 @@ package cn.yiidii.framework.satoken;
 import cn.dev33.satoken.context.SaHolder;
 import cn.dev33.satoken.stp.SaLoginConfig;
 import cn.dev33.satoken.stp.StpUtil;
-import cn.yiidii.base.constant.Constant;
-import cn.yiidii.base.core.LoginUser;
+import cn.yiidii.framework.constant.Constant;
+import cn.yiidii.framework.core.LoginUser;
 
 /**
  * LoginHelper

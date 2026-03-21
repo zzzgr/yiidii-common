@@ -2,7 +2,7 @@ package cn.yiidii.framework.satoken;
 
 import cn.dev33.satoken.stp.StpInterface;
 import cn.hutool.json.JSONUtil;
-import cn.yiidii.base.core.LoginUser;
+import cn.yiidii.framework.core.LoginUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

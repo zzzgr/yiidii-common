@@ -5,12 +5,15 @@ import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.exception.NotPermissionException;
 import cn.dev33.satoken.exception.NotRoleException;
 import cn.hutool.core.stream.StreamUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.util.ObjectUtil;
-import cn.yiidii.base.core.domain.R;
-import cn.yiidii.base.exception.BizException;
-import cn.yiidii.base.util.MessageUtils;
+import cn.yiidii.framework.core.domain.R;
+import cn.yiidii.framework.constant.Constant;
+import cn.yiidii.framework.exception.BizException;
+import cn.yiidii.framework.util.MessageUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.MyBatisSystemException;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
@@ -30,6 +33,7 @@ import javax.validation.ConstraintViolationException;
 
 @Slf4j
 @RestControllerAdvice
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 public class GlobalExceptionHandler {
 
     /**
@@ -49,7 +53,7 @@ public class GlobalExceptionHandler {
                                                        HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         log.error("请求地址'{}',不支持'{}'请求", requestURI, e.getMethod());
-        return R.failed(e.getMessage());
+        return R.failed(HttpStatus.METHOD_NOT_ALLOWED.value(), "请求方式不支持");
     }
 
 
@@ -70,12 +74,12 @@ public class GlobalExceptionHandler {
     public R<Void> handleCannotFindDataSourceException(MyBatisSystemException e, HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         String message = e.getMessage();
-        if (message.contains("CannotFindDataSourceException")) {
+        if (StrUtil.contains(message, "CannotFindDataSourceException")) {
             log.error("请求地址'{}', 未找到数据源", requestURI);
             return R.failed("未找到数据源，请联系管理员确认");
         }
         log.error("请求地址'{}', Mybatis系统异常", requestURI, e);
-        return R.failed(message);
+        return R.failed(buildInternalErrorMessage(request));
     }
 
     /**
@@ -95,7 +99,8 @@ public class GlobalExceptionHandler {
     public R<Void> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e, HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         log.error("请求参数类型不匹配'{}',发生系统异常.", requestURI);
-        return R.failed(String.format("请求参数类型不匹配，参数[%s]要求类型为：'%s'，但输入值为：'%s'", e.getName(), e.getRequiredType().getName(), e.getValue()));
+        String requiredType = e.getRequiredType() == null ? Constant.UNKNOWN_ZH : e.getRequiredType().getSimpleName();
+        return R.failed(String.format("请求参数类型不匹配，参数[%s]要求类型为：'%s'，但输入值为：'%s'", e.getName(), requiredType, e.getValue()));
     }
 
 
@@ -106,7 +111,7 @@ public class GlobalExceptionHandler {
     public R<Void> handleRuntimeException(RuntimeException e, HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         log.error("请求地址'{}',发生未知异常.", requestURI, e);
-        return R.failed(e.getMessage());
+        return R.failed(buildInternalErrorMessage(request));
     }
 
     /**
@@ -135,7 +140,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public R<Void> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         log.error(e.getMessage());
-        String message = e.getBindingResult().getFieldError().getDefaultMessage();
+        String message = StreamUtil.join(
+            e.getBindingResult().getAllErrors().stream(),
+            ", ",
+            DefaultMessageSourceResolvable::getDefaultMessage
+        );
         return R.failed(message);
     }
 
@@ -179,6 +188,14 @@ public class GlobalExceptionHandler {
     public R<Void> handleException(Exception e, HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         log.error("请求地址'{}',发生系统异常.", requestURI, e);
-        return R.failed(e.getMessage());
+        return R.failed(buildInternalErrorMessage(request));
+    }
+
+    private String buildInternalErrorMessage(HttpServletRequest request) {
+        Object traceId = request.getAttribute(Constant.TRACE_ID);
+        if (traceId == null) {
+            return "系统异常，请联系管理员";
+        }
+        return String.format("系统异常，请联系管理员 [traceId=%s]", traceId);
     }
 }

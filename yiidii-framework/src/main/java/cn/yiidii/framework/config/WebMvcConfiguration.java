@@ -1,9 +1,11 @@
 package cn.yiidii.framework.config;
 
+import cn.yiidii.framework.filter.RequestTraceFilter;
 import cn.yiidii.framework.interceptor.CompletionInterceptor;
 import cn.yiidii.framework.interceptor.LocaleInterceptor;
-import cn.yiidii.framework.interceptor.RequestTraceInterceptor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -19,7 +21,15 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new CompletionInterceptor());
         registry.addInterceptor(new LocaleInterceptor());
-        registry.addInterceptor(new RequestTraceInterceptor());
+    }
+
+    @Bean
+    public FilterRegistrationBean<RequestTraceFilter> requestTraceFilterRegistrationBean() {
+        FilterRegistrationBean<RequestTraceFilter> registrationBean = new FilterRegistrationBean<>();
+        registrationBean.setFilter(new RequestTraceFilter(2048));
+        registrationBean.addUrlPatterns("/*");
+        registrationBean.setOrder(Integer.MIN_VALUE);
+        return registrationBean;
     }
 
     /**
